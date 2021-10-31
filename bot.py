@@ -223,7 +223,7 @@ async def update_status(message):
             status_message = await channel.send(embed=embed)
         else:
             await status_message.edit(embed=embed)
-        if offline > 1:
+        if offline > 10:
             if ping_message != None:
                 await ping_message.delete()
             ping_message = await channel.send("<@600352709106991106>")
