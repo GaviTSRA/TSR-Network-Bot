@@ -1,4 +1,4 @@
 asyncio
 discord
 datetime
-dotenv
+python-dotenv
