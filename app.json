@@ -1,0 +1,22 @@
+{
+  "name": "TSR Network Bot",
+  "description": "The TSR Network Bot",
+  "image": "heroku/python",
+  "repository": "https://github.com/GaviTSRA/TSR-Network-Bot",
+  "keywords": ["python"],
+  "addons": [ " ],
+  "env": {
+    "SECRET_KEY": {
+      "description": "The Bot Token",
+      "generator": "secret"
+    }
+  },
+  "environments": {
+    "test": {
+      "scripts": {
+        "test-setup": "python bot.py",
+        "test": "python bot.py test"
+      }
+    }
+  }
+}

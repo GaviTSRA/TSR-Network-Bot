@@ -1,0 +1,8 @@
+asyncio
+discord
+platform
+subprocess
+datetime
+socket
+dotenv
+os
