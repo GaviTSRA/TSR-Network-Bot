@@ -279,7 +279,7 @@ def ping_task(host):
         return False
 
 def remove_color(string):
-    string = string.replace("[m", "").replace("","").replace("[0;31;1m", "").replace("[3m", "").replace("[4m", "").replace("[0;37m", "")
+    string = string.replace("[m", "").replace("","").replace("[0;31;1m", "").replace("[3m", "").replace("[4m", "").replace("[0;37m", "").replace("[0;33;1m","")
     return string
 
 async def manage_server(message: discord.Message, args):
