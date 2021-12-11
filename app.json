@@ -4,7 +4,7 @@
   "image": "heroku/python",
   "repository": "https://github.com/GaviTSRA/TSR-Network-Bot",
   "keywords": ["python"],
-  "addons": [ " ],
+  "addons": [ "" ],
   "env": {
     "SECRET_KEY": {
       "description": "The Bot Token",
