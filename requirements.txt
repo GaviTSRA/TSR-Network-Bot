@@ -3,3 +3,4 @@ discord
 datetime
 python-dotenv
 websocket-client
+requests
