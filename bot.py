@@ -282,7 +282,7 @@ def remove_color(string):
     string = string.replace("[m", "").replace("","").replace("[0;31;1m", "").replace("[3m", "").replace("[4m", "").replace("[0;37m", "")
     return string
 
-async def manage_server(message, args):
+async def manage_server(message: discord.Message, args):
     global acc
     method = args[2]
     server = None
@@ -303,6 +303,9 @@ async def manage_server(message, args):
         embed.add_field(name="Suspended",value=server.attributes.is_suspended)
         await message.channel.send(embed=embed)
     elif method == "run":
+        if not checkForRole("Owner", message.author): 
+            await message.channel.send(embed=fail_embed("TSR Network Bot | Server | Run", "Owner", "run"))
+            return
         command = ""
         for cmd in args[3:]:
             command += cmd + " "
@@ -315,6 +318,9 @@ async def manage_server(message, args):
         else: embed.color = discord.Colour.from_rgb(255,0,0)
         await message.channel.send(embed=embed)
     elif method in ["start", "restart", "stop", "kill"]:
+        if not checkForRole("Beta", message.author): 
+            await message.channel.send(embed=fail_embed("TSR Network Bot | Server | Change Power State", "Beta", "change power state"))
+            return
         if method == "start":
             success = server.start()
         elif method == "restart":
@@ -369,6 +375,19 @@ async def manage_server(message, args):
         embed = discord.Embed(title="TSR Network Bot | Server | Logs")
         embed.add_field(name="Logs", value=logs)
         await message.channel.send(embed=embed)
+
+def checkForRole(role_name: str, author: discord.Member) -> bool:
+    for role in author.roles:
+        if role.name == role_name:
+            return True
+    return False
+
+def fail_embed(title: str, msg: str, cmd: str) -> discord.Embed:
+    embed = discord.Embed(title=title)
+    embed.add_field(name="Success",value="false")
+    embed.add_field(name="Reason", value="You are not allowed to use "+cmd)
+    embed.color = discord.Colour.from_rgb(255,0,0)
+    return embed
 
 client.run(TOKEN)
 

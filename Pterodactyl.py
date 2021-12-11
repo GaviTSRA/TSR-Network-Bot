@@ -60,7 +60,6 @@ class Account:
                 self._open_websocket()
             self.ws.send('{"event":"send logs", "args":[null]}')
             while self.ws_thread_running:
-                print("running "+self._websocket_listener_thread.name)
                 data = json.loads(self.ws.recv())
                 if data["event"] == "console output":
                     self.logs.append(data["args"][0])
