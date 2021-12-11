@@ -75,7 +75,6 @@ class Account:
                     self.current_state = data["args"][0]
                 elif data["event"] == "token expired":
                     self.ws = None
-                    self.ws_thread_running = False
                     self._open_websocket()
         def _send_power_action(self, action):
             if self.ws == None:
