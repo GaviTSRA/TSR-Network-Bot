@@ -285,7 +285,7 @@ def remove_color(string):
 async def manage_server(message: discord.Message, args):
     global acc
     method = args[2]
-    server = None
+    server: Account.Server = None
     for serv in acc.servers:
         if serv.attributes.name == args[1]:
             server = serv
@@ -332,7 +332,11 @@ async def manage_server(message: discord.Message, args):
         embed = discord.Embed(title="TSR Network Bot | Server | Change Power State")
         embed.add_field(name="Success", value=success)
         if success: embed.color = discord.Colour.from_rgb(0,255,0)
-        else: embed.color = discord.Colour.from_rgb(255,0,0)
+        else: 
+            embed.color = discord.Colour.from_rgb(255,0,0)
+            embed.add_field(name="Info", value="Trying to fix the problem...")
+            server.close_ws_socket()
+            server.start_websocket_thread()
         await message.channel.send(embed=embed)
     elif method == "status":
         server.get_usage()
@@ -384,7 +388,7 @@ def checkForRole(role_name: str, author: discord.Member) -> bool:
 
 def fail_embed(title: str, msg: str, cmd: str) -> discord.Embed:
     embed = discord.Embed(title=title)
-    embed.add_field(name="Success",value="false")
+    embed.add_field(name="Success",value="False")
     embed.add_field(name="Reason", value="You are not allowed to use "+cmd)
     embed.color = discord.Colour.from_rgb(255,0,0)
     return embed
