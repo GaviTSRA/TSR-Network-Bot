@@ -123,7 +123,7 @@ async def on_message(message):
                 name="Mindustry Servers",
                 value="Sandbox:\n{sandbox}\nAnarchy:\n{anarchy}".format(
                     sandbox=show_ips["sandbox"],
-                    survival=show_ips["anarchy"],
+                    anarchy=show_ips["anarchy"],
                 )
             )
             embed.add_field(
