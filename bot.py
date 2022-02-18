@@ -22,29 +22,17 @@ offline = 0
 acc = Account(API_KEY,"https://control.optikservers.com")
 acc.get_servers()
 
-acc.servers[0].start_websocket_thread()
-
 ips = {
-    "hub": "ult4.falix.gg:26904",
-    "sandbox": "ult10.falix.gg:27370",
-    "survival": "ult7.falix.gg:25843",
-    "anarchy": "ult5.falix.gg:27319",
-    "sandbox_backup": "ult4.falix.gg:27180",
-    "smp": "ult1.falix.gg:26017",
-    "gt": "ult7.falix.gg:26811",
-    "website": "gavitsra.github.io",
-    "smp_dynmap": "ult1.falix.gg:26984"
-}
-show_ips = {
-    "hub": "ult4.falix.gg:26904",
-    "sandbox": "ult10.falix.gg:27370",
-    "survival": "ult7.falix.gg:25843",
-    "anarchy": "ult5.falix.gg:27319",
-    "sandbox_backup": "ult4.falix.gg:27180",
-    "smp": "smp.tsrnetwork.ga",
-    "gt": "Private",
+    "sandbox": "us01.optik.host:26194",
+    "anarchy": "uk01.optik.host:26164",
+    "mc": "uk01.optik.host:26175",
     "website": "tsrnetwork.ga",
-    "smp_dynmap": "ult1.falix.gg:26984"
+}
+show_ips = {        
+    "sandbox": "us01.optik.host:26194",
+    "anarchy": "uk01.optik.host:26164",
+    "mc": "uk01.optik.host:26175",
+    "website": "tsrnetwork.ga",
 }
 
 bot = commands.Bot(command_prefix=PREFIX)
@@ -106,26 +94,21 @@ async def on_message(message):
             embed = discord.Embed(title="TSR Network Status",description=f"{EMOJI_OFFLINE}: Offline or Unknown\n{EMOJI_RUNNING}: Online\nChecked at: {datetime.utcnow()} (UTC)")
             embed.add_field(
                 name="Mindustry Servers",
-                value='{hub} Hub\n{sandbox} Sandbox\n{survival} Survival\n{anarchy} Anarchy\n{sandbox_backup} Sandbox Backup'.format(
-                    hub=EMOJI_RUNNING if ping(ips["hub"]) else EMOJI_OFFLINE,
+                value='{hub} Hub\n{sandbox} Sandbox\n{anarchy} Anarchy'.format(
                     sandbox=EMOJI_RUNNING if ping(ips["sandbox"]) else EMOJI_OFFLINE,
-                    survival=EMOJI_RUNNING if ping(ips["survival"]) else EMOJI_OFFLINE,
                     anarchy=EMOJI_RUNNING if ping(ips["anarchy"]) else EMOJI_OFFLINE,
-                    sandbox_backup=EMOJI_RUNNING if ping(ips["sandbox_backup"]) else EMOJI_OFFLINE,
                 )
             )
             embed.add_field(
                 name="Minecraft Servers",
-                value="{smp} SMP\n{gt} GT".format(
-                    smp=EMOJI_RUNNING if ping(ips["smp"]) else EMOJI_OFFLINE,
-                    gt=EMOJI_RUNNING if ping(ips["gt"]) else EMOJI_OFFLINE,
+                value="{mc} 1.18 Survival".format(
+                    mc=EMOJI_RUNNING if ping(ips["mc"]) else EMOJI_OFFLINE,
                 )
             )
             embed.add_field(
                 name="Other",
-                value="{website} TSR Website\n{smp_dynmap} SMP Dynmap".format(
+                value="{website} TSR Website".format(
                     website=EMOJI_RUNNING if ping(ips["website"]) else EMOJI_OFFLINE,
-                    smp_dynmap=EMOJI_RUNNING if ping(ips["smp_dynmap"]) else EMOJI_OFFLINE,
                 )
             )
             await message.channel.send(embed=embed)
@@ -138,19 +121,15 @@ async def on_message(message):
             )
             embed.add_field(
                 name="Mindustry Servers",
-                value="Hub:\n{hub}\nSandbox:\n{sandbox}\nSurvival:\n{survival}\nAnarchy:\n{anarchy}\nSandbox Backup:\n{sandbox_backup}".format(
-                    hub=show_ips["hub"],
+                value="Sandbox:\n{sandbox}\nAnarchy:\n{anarchy}".format(
                     sandbox=show_ips["sandbox"],
-                    survival=show_ips["survival"],
-                    anarchy=show_ips["anarchy"],
-                    sandbox_backup=show_ips["sandbox_backup"],
+                    survival=show_ips["anarchy"],
                 )
             )
             embed.add_field(
                 name="Minecraft Servers",
-                value="SMP:\n{smp}\nGT:\n{gt}".format(
-                    smp=show_ips["smp"],
-                    gt=show_ips["gt"],
+                value="1.18 Survival: {mc}".format(
+                    mc=show_ips["mc"]
                 )
             )
             embed.add_field(
@@ -192,6 +171,7 @@ async def on_raw_reaction_add(payload):
             except IndexError:
                 pass
 
+#TODO
 async def update_status(message):
     global online
     global offline
@@ -244,6 +224,7 @@ async def update_status(message):
                 ping_message = None
         await asyncio.sleep(10)
 
+#TODO
 def ping(host):
     host = host.split(":")
     ip = host[0]
@@ -259,6 +240,7 @@ def ping(host):
     except:
         return False
 
+#TODO
 def ping_task(host):
     global offline
     global online
@@ -318,9 +300,10 @@ async def manage_server(message: discord.Message, args):
         else: embed.color = discord.Colour.from_rgb(255,0,0)
         await message.channel.send(embed=embed)
     elif method in ["start", "restart", "stop", "kill"]:
-        if not checkForRole("Beta", message.author): 
+        if not (checkForRole("Beta", message.author) or checkForRole("Admin", message.author) or checkForRole("Owner", message.author) or  checkForRole("Co-Owner", message.author)): 
             await message.channel.send(embed=fail_embed("TSR Network Bot | Server | Change Power State", "Beta", "change power state"))
             return
+        server.start_websocket_thread()
         if method == "start":
             success = server.start()
         elif method == "restart":
@@ -334,11 +317,11 @@ async def manage_server(message: discord.Message, args):
         if success: embed.color = discord.Colour.from_rgb(0,255,0)
         else: 
             embed.color = discord.Colour.from_rgb(255,0,0)
-            embed.add_field(name="Info", value="Trying to fix the problem...")
-            server.close_ws_socket()
-            server.start_websocket_thread()
+            embed.add_field(name="Info", value="Error")
+        server.close_ws_socket()
         await message.channel.send(embed=embed)
     elif method == "status":
+        server.start_websocket_thread()
         server.get_usage()
 
         cpu = str(int(round(server.resources.cpu_absolute,0)))+"/"+str(server.attributes.limits.max_cpu)+"%"
@@ -369,16 +352,20 @@ async def manage_server(message: discord.Message, args):
         embed.add_field(name="Memory",value=ram)
         embed.add_field(name="Disk",value=disk)
         embed.color = color
-
+        server.close_ws_socket()
         await message.channel.send(embed=embed)
     elif method == "logs":
-        logs = ""
-        for row in server.logs[-10:]:
-            logs += remove_color(row) + "\n"
-        if logs == "": logs = "None"
-        embed = discord.Embed(title="TSR Network Bot | Server | Logs")
-        embed.add_field(name="Logs", value=logs)
-        await message.channel.send(embed=embed)
+        if checkForRole("Beta", message.author) or checkForRole("Admin", message.author) or checkForRole("Owner", message.author) or checkForRole("Alpha", message.author):
+            server.start_websocket_thread()
+            logs = ""
+            for row in server.logs[-5:]:
+                logs += remove_color(row) + "\n"
+            if logs == "": logs = "None"
+            embed = discord.Embed(title="TSR Network Bot | Server | Logs")
+            embed.add_field(name="Logs", value=logs)
+            await message.channel.send(embed=embed)
+            server.close_ws_socket()
+        else: await message.channel.send("You have no permission for that")
 
 def checkForRole(role_name: str, author: discord.Member) -> bool:
     for role in author.roles:
@@ -395,5 +382,5 @@ def fail_embed(title: str, msg: str, cmd: str) -> discord.Embed:
 
 client.run(TOKEN)
 
-for s in acc.servers:
-    s.close_ws_socket()
+# for s in acc.servers:
+#     s.close_ws_socket()
