@@ -94,7 +94,7 @@ async def on_message(message):
             embed = discord.Embed(title="TSR Network Status",description=f"{EMOJI_OFFLINE}: Offline or Unknown\n{EMOJI_RUNNING}: Online\nChecked at: {datetime.utcnow()} (UTC)")
             embed.add_field(
                 name="Mindustry Servers",
-                value='{hub} Hub\n{sandbox} Sandbox\n{anarchy} Anarchy'.format(
+                value='{sandbox} Sandbox\n{anarchy} Anarchy'.format(
                     sandbox=EMOJI_RUNNING if ping(ips["sandbox"]) else EMOJI_OFFLINE,
                     anarchy=EMOJI_RUNNING if ping(ips["anarchy"]) else EMOJI_OFFLINE,
                 )
