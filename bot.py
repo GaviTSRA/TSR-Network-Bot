@@ -134,9 +134,8 @@ async def on_message(message):
             )
             embed.add_field(
                 name="Other",
-                value="TSR Website:\n{website}\nSMP Dynmap:\n{smp_dynmap}".format(
+                value="TSR Website:\n{website}".format(
                     website=show_ips["website"],
-                    smp_dynmap=show_ips["smp_dynmap"],
                 )
             )
             await message.channel.send(embed=embed)
